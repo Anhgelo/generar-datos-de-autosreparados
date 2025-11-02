@@ -3,6 +3,7 @@ El siguiente script en Python genera fake data de un centro de reparación de au
 En este codigo es necesario instalar primero 
 
 pip install streamlit faker openpyxl xlsxwriter
+
 fake data
 
 tambien los vehiculos
