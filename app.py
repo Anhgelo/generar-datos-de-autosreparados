@@ -1,20 +1,50 @@
 import streamlit as st
 from faker import Faker
+from datetime import date
 from faker_vehicle import VehicleProvider
 import pandas as pd
 from io import BytesIO
+import random
 
 # Inicializar Faker
 fake = Faker('es_ES')
 fake.add_provider(VehicleProvider)
+##fechas de la reparacion
+FECHA_INICIO_OBJ = date(2018, 1, 1) # Año, Mes, Día
+FECHA_FIN_OBJ = date(2024, 12, 31) # Año, Mes, Día
+#ocupaciones especificas
+# Define tu lista específica de trabajos de alta cualificación
+OCUPACIONES_ESPECIFICAS = [
+    'Ingeniero de Sistemas',
+    'Abogado Corporativo',
+    'Médico Cirujano',
+    'Científico de Datos',
+    'Arquitecto Principal',
+    'Consultor Financiero',
+    'Juez',
+    'Profesor Universitario',
+    'Ingeniero de minas',
+    'Administrador'
+]
 # Diccionario de campos disponibles
 Available_fields = {
     'Nombres': fake.name,
     'Dirección': fake.address,
     'Empresa': fake.company,
-    'Ocupación': fake.job,
+    'Ocupación': lambda: random.choice(OCUPACIONES_ESPECIFICAS),
     'Auto_reparado': fake.vehicle_make,
-    'Fecha_rep': fake.date
+    'Fecha_rep': lambda: fake.date_between_dates(
+        date_start=FECHA_INICIO_OBJ,
+        date_end=FECHA_FIN_OBJ
+    ),
+    'Monto_Gastado': lambda: fake.pydecimal(
+        left_digits=5,   # Máximo 3 dígitos antes del punto (e.g., 999)
+        right_digits=2,  # 2 decimales
+        min_value=5000,    # Gasto mínimo de 50.00
+        max_value=9999    # Gasto máximo de 999.99
+    ),
+    'Divisa': lambda: 'PEN'
+
 }
 
 # Función para generar datos falsos
@@ -47,3 +77,5 @@ if st.button('Generar datos'):
 
     st.success('Datos generados con éxito')
     st.write(df)
+
+
